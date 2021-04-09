@@ -7,7 +7,7 @@ ___
 
 ### AHORCADO
 
-El problema del es el famoso juego en el que uno debe adivinar una palabra de a una letra a la vez con un numero de maximo de letras que puede errar.
+El problema del famoso juego en el que uno debe adivinar una palabra de a una letra a la vez con un numero de maximo de letras que puede errar.
 
 ### CIPHER MSG
 
