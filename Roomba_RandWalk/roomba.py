@@ -224,14 +224,12 @@ class Robot(object):
         """
         raise NotImplementedError # don't change this!
 
-
 class StandardRobot(Robot):
     """
-    A StandardRobot is a Robot with the standard movement strategy.
+    The standard movement strategy.
 
-    At each time-step, a StandardRobot attempts to move in its current
-    direction; when it would hit a wall, it *instead* chooses a new direction
-    randomly.
+    At each time-step, it attempts to move in its current direction; when 
+    it would hit a wall, it *instead* chooses a new direction randomly.
     """
     def updatePositionAndClean(self):
         """
@@ -240,8 +238,15 @@ class StandardRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
+        new_pos = self.pos.getNewPosition(self.dir, self.speed)
 
+        if self.room.isPositionInRoom(new_pos):
+            self.pos = new_pos
+            self.room.cleanTileAtPosition(self.pos)
+        else:
+            self.dir = random.randint(0, 360)
+
+        return
 
 # Uncomment this line to see your implementation of StandardRobot in action!
 ##testRobotMovement(StandardRobot, RectangularRoom)
