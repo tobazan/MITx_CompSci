@@ -1,13 +1,5 @@
-# 6.00.2x Problem Set: Simulating robots
-
 import math
 import random
-
-import ps2_visualize
-import pylab
-
-# For Python 3.6:
-from ps2_verify_movement36 import testRobotMovement
 
 class Position(object):
     """
@@ -248,8 +240,28 @@ class StandardRobot(Robot):
 
         return
 
-# Uncomment this line to see your implementation of StandardRobot in action!
-##testRobotMovement(StandardRobot, RectangularRoom)
+class RandomWalkRobot(Robot):
+    """
+    They move with the "random walk" strategy: it chooses a new direction
+    at random at the end of each time-step.
+    """
+    def updatePositionAndClean(self):
+        """
+        Simulate the passage of a single time-step.
+
+        Move the robot to a new position and mark the tile it is on as having
+        been cleaned.
+        """
+        new_pos = self.pos.getNewPosition(self.dir, self.speed)
+
+        if self.room.isPositionInRoom(new_pos):
+            self.pos = new_pos
+            self.room.cleanTileAtPosition(self.pos)
+            self.dir = random.randint(0, 360)
+        else:
+            self.dir = random.randint(0, 360)
+
+        return
 
 def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
                 robot_type):
@@ -266,85 +278,36 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     height: an int (height > 0)
     min_coverage: a float (0 <= min_coverage <= 1.0)
     num_trials: an int (num_trials > 0)
-    robot_type: class of robot to be instantiated (e.g. StandardRobot or
-                RandomWalkRobot)
+    robot_type: class of robot to be instantiated (Standard or Random)
     """
-    raise NotImplementedError
+    trial = 0
+    trial_results = []
 
-# Uncomment this line to see how much your simulation takes on average
-##print(runSimulation(1, 1.0, 10, 10, 0.75, 30, StandardRobot))
+    while trial <= num_trials:
 
-class RandomWalkRobot(Robot):
-    """
-    A RandomWalkRobot is a robot with the "random walk" movement strategy: it
-    chooses a new direction at random at the end of each time-step.
-    """
-    def updatePositionAndClean(self):
-        """
-        Simulate the passage of a single time-step.
+        theRoom = RectangularRoom(width, height)
 
-        Move the robot to a new position and mark the tile it is on as having
-        been cleaned.
-        """
-        raise NotImplementedError
+        aspis = [robot_type(theRoom, speed) for i in range(0, num_robots)]
 
+        cleanSpace = 0
+        timeSteps = 0
 
-def showPlot1(title, x_label, y_label):
-    """
-    What information does the plot produced by this function tell you?
-    """
-    num_robot_range = range(1, 11)
-    times1 = []
-    times2 = []
-    for num_robots in num_robot_range:
-        print("Plotting", num_robots, "robots...")
-        times1.append(runSimulation(num_robots, 1.0, 20, 20, 0.8, 20, StandardRobot))
-        times2.append(runSimulation(num_robots, 1.0, 20, 20, 0.8, 20, RandomWalkRobot))
-    pylab.plot(num_robot_range, times1)
-    pylab.plot(num_robot_range, times2)
-    pylab.title(title)
-    pylab.legend(('StandardRobot', 'RandomWalkRobot'))
-    pylab.xlabel(x_label)
-    pylab.ylabel(y_label)
-    pylab.show()
+        while cleanSpace <= min_coverage:
+            for aspiradora in aspis:
+                aspiradora.updatePositionAndClean()
+                
+            cleanSpace = theRoom.getNumCleanedTiles() / theRoom.getNumTiles()
+            timeSteps += 1
 
-    
-def showPlot2(title, x_label, y_label):
-    """
-    What information does the plot produced by this function tell you?
-    """
-    aspect_ratios = []
-    times1 = []
-    times2 = []
-    for width in [10, 20, 25, 50]:
-        height = 300//width
-        print("Plotting cleaning time for a room of width:", width, "by height:", height)
-        aspect_ratios.append(float(width) / height)
-        times1.append(runSimulation(2, 1.0, width, height, 0.8, 200, StandardRobot))
-        times2.append(runSimulation(2, 1.0, width, height, 0.8, 200, RandomWalkRobot))
-    pylab.plot(aspect_ratios, times1)
-    pylab.plot(aspect_ratios, times2)
-    pylab.title(title)
-    pylab.legend(('StandardRobot', 'RandomWalkRobot'))
-    pylab.xlabel(x_label)
-    pylab.ylabel(y_label)
-    pylab.show()
-    
+        trial_results.append(timeSteps)
+        trial += 1
 
-# === Problem 6
-# NOTE: If you are running the simulation, you will have to close it 
-# before the plot will show up.
+    return sum(trial_results) / len(trial_results)
 
-#
-# 1) Write a function call to showPlot1 that generates an appropriately-labeled
-#     plot.
-#
-#       (... your call here ...)
-#
+# TESTEAMOS LAS SIMULACIONES DE AMBOS MODELOS DE ASPIRADORA
 
-#
-# 2) Write a function call to showPlot2 that generates an appropriately-labeled
-#     plot.
-#
-#       (... your call here ...)
-#
+# print("PERFORMANCE MODELO STD")
+# print(runSimulation(5, 1.0, 13, 13, 0.82, 30, StandardRobot))
+
+# print("\nPERFORMANCE MODELO RANDOM_WALK")
+# print(runSimulation(5, 1.0, 13, 13, 0.82, 30, RandomWalkRobot))
