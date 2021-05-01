@@ -23,6 +23,10 @@ El jugador puede optar por jugar nuevamente la mano anterior e incluso dejar que
 
 El problema proponia comparar ambos algoritmos resolviendo un problema de transportar vacas al espacio optimizando cantidad de viajes con una restriccion de peso/carga
 
-### ROOMBA SIMU
+### ROOMBA RANDOM WALK
 
 El problema proponia programar una **simulacion** de los robots aspiradoras (roomba es uno de los fabricantes lider).
+
+### VIRUS MONTECARLO
+
+El problema proponia modelar mediante POO y asi **simular** el efecto del tratamiento con farmacos de distintos virus
