@@ -125,26 +125,37 @@ class Patient(object):
         self.viruses = updated_viruses + offsprings
         return
 
-# # PROBLEM 2
-# def simulationWithoutDrug(numViruses, maxPop, maxBirthProb, clearProb,
-#                         numTrials):
-#     """
-#     Run the simulation and plot the graph for problem 3 (no drugs are used,
-#     viruses do not have any drug resistance).    
-#     For each of numTrials trial, instantiates a patient, runs a simulation
-#     for 300 timesteps, and plots the average virus population size as a
-#     function of time.
+def simulationWithoutDrug(numViruses, maxPop, maxBirthProb, clearProb, numTrials):
+    """
+    Run the simulation (No drugs are used, viruses DON'T have any drug resistance).    
+    For each of numTrials trial, instantiates a patient, runs a simulation for 300
+    timesteps, and plots the average virus population size as a function of time.
 
-#     numViruses: number of SimpleVirus to create for patient (an integer)
-#     maxPop: maximum virus population for patient (an integer)
-#     maxBirthProb: Maximum reproduction probability (a float between 0-1)        
-#     clearProb: Maximum clearance probability (a float between 0-1)
-#     numTrials: number of simulation runs to execute (an integer)
-#     """
+        numViruses: number of SimpleVirus to create for patient (an integer)
+        maxPop: maximum virus population for patient (an integer)
+        maxBirthProb: Maximum reproduction probability (a float between 0-1)        
+        clearProb: Maximum clearance probability (a float between 0-1)
+        numTrials: number of simulation runs to execute (an integer)
+    """
+    result = [ [] for t in range(300) ]
+    
+    for trial in range(numTrials):
+        viruses = [SimpleVirus(maxBirthProb, clearProb) for v in range(numViruses)]
+        person = Patient(viruses, maxPop)
 
-#     # TODO
+        for step in range(300):
+            person.update()
+            result[step].append(person.getTotalPop())
 
+    y = [ sum(r)/numTrials for r in result]
 
+    pylab.plot(y, label = "SimpleVirus")
+    pylab.title("SimpleVirus simulation")
+    pylab.xlabel("Time Steps")
+    pylab.ylabel("Average Virus Population")
+    pylab.legend(loc = "best")
+    
+    return  pylab.show()
 
 # #
 # # PROBLEM 3
